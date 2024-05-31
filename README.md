@@ -34,5 +34,5 @@ This Ansible playbook installs MySQL 5.6 on a Ubuntu Server 24.04 LTS along with
 - **Start MySQL Service:**
     - Starts and enables the MySQL service to run on system boot.
 
-## File Structure
+
 
