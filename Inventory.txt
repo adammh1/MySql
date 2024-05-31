@@ -1,0 +1,7 @@
+
+## Inventory File
+
+The `hosts` file should contain the target hosts where you want to install MySQL 5.6. Example:
+
+[hosts]
+NameOfTheHost  ansible_host=<IP ADRESS> ansible_user=<UserName>

@@ -1,0 +1,63 @@
+- name: MYSQL 5.6
+  hosts: <HostName>
+  become: yes
+  gather_facts: yes
+  tasks:
+  - name: Download MySql 5.6
+    ansible.builtin.shell:
+      cmd: "wget --progress=bar:force -P /home/{{ ansible_user }} https://downloads.mysql.com/archives/get/p/23/file/mysql-server_5.6.51-1debian9_amd64.deb-bundle.tar"
+    ansible.builtin.get_url:
+      url: " https://cdn.mysql.com/archives/mysql-5.6/mysql-server_5.6.51-1debian9_amd64.deb-bundle.tar"
+      dest: /home/{{ ansible_user }}
+      checksum: "sha256:14d3dbc19ab02a57352096a82455d65dd413ad63a98fce4c7f7ffafbe19bb9c9"
+  - name: Unarchive the package
+    unarchive:
+      remote_src: true
+      src: /home/{{ ansible_user }}/mysql-server_5.6.51-1debian9_amd64.deb-bundle.tar
+      dest: /home/{{ ansible_user }}
+  - name: Install Dependecies
+    block:
+      - name: Install libaio
+        ansible.builtin.shell:
+          cmd: "curl -O http://launchpadlibrarian.net/646633572/libaio1_0.3.113-4_amd64.deb && sudo dpkg -i libaio1_0.3.113-4_amd64.deb"
+      - name: Install Libsec
+        ansible.builtin.shell:
+          cmd: "curl -O http://launchpadlibrarian.net/648013231/libtinfo5_6.4-2_amd64.deb && sudo dpkg -i libtinfo5_6.4-2_amd64.deb"
+      - name: Install Libcurses5
+        ansible.builtin.shell:
+          cmd: "curl -O http://launchpadlibrarian.net/648013227/libncurses5_6.4-2_amd64.deb && sudo dpkg -i libncurses5_6.4-2_amd64.deb"
+
+  - name: INSTALL MYSQL 5.6
+    block:
+      - name: install mysql-common.deb
+        ansible.builtin.apt:
+         deb: /home/{{ ansible_user }}/mysql-common_5.6.51-1debian9_amd64.deb
+        register: out
+      - debug: var=out
+      - name: install mysql-community-client.deb
+        ansible.builtin.apt:
+         deb: /home/{{ ansible_user }}/mysql-community-client_5.6.51-1debian9_amd64.deb
+        register: out
+      - debug: var=out
+      - name: install mysql-client.deb
+        ansible.builtin.apt:
+         deb: /home/{{ ansible_user }}/mysql-client_5.6.51-1debian9_amd64.deb
+        register: out
+      - debug: var=out
+      - name: install mysql-community-server.deb
+        ansible.builtin.apt:
+         deb: /home/{{ ansible_user }}/mysql-community-server_5.6.51-1debian9_amd64.deb
+        register: out
+      - debug: var=out
+      - name: install mysql-server.deb
+        ansible.builtin.apt:
+         deb: /home/{{ ansible_user }}/mysql-server_5.6.51-1debian9_amd64.deb
+        register: out
+      - debug: var=out
+      - name: install libmysqlclient.deb
+        ansible.builtin.apt:
+         deb: /home/{{ ansible_user }}/libmysqlclient18_5.6.51-1debian9_amd64.deb
+        register: out
+      - debug: var=out
+  - name: Run mysql service
+    service: name=mysql state=started enabled=yes
